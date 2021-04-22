@@ -67,6 +67,7 @@
     }
 
     static bool pythoncheckinterrupted() {
+      if (!casadi::InterruptHandler::is_main_thread()) return false;
       return PyErr_CheckSignals();
     }
 
@@ -99,12 +100,19 @@
 
   // @jgillis: please document
   casadi::InterruptHandler::checkInterrupted = casadi::pythoncheckinterrupted;
+
+  casadi::InterruptHandler::is_main_thread();
+
 %}
 #elif defined(SWIGMATLAB)
 %{
   namespace casadi {
     // Redirect printout to mexPrintf
     static void mexlogger(const char* s, std::streamsize num, bool error) {
+      if (!casadi::InterruptHandler::is_main_thread()) {
+        casadi::Logger::writeDefault(s, num, error);
+        return;
+      }
       mexPrintf("%.*s", static_cast<int>(num), s);
     }
 
@@ -112,22 +120,6 @@
     // Flush the command window buffer (needed in gui mode)
     static void mexflush(bool error) {
     }
-#else
-    // Undocumented matlab feature
-    extern "C" bool utIsInterruptPending(void);
-    extern "C" void utSetInterruptPending(bool);
-
-    // Flush the command window buffer (needed in gui mode)
-    static void mexflush(bool error) {
-      if (!utIsInterruptPending()) {
-        if (mexEvalString("drawnow('update');pause(0.0001);")) {
-          utSetInterruptPending(true);
-        }
-      }
-    }
-#endif
-
-#ifdef HAVE_OCTAVE
     // Never for Octave
     static bool mexcheckinterrupted() {
       return false;
@@ -137,9 +129,11 @@
     }
 #else
     // Undocumented matlab feature
-    extern "C" bool utIsInterruptPending();
+    extern "C" bool utIsInterruptPending(void);
+    extern "C" void utSetInterruptPending(bool);
 
     static bool mexcheckinterrupted() {
+      if (!casadi::InterruptHandler::is_main_thread()) return false;
       return utIsInterruptPending();
     }
 
@@ -147,7 +141,20 @@
       utSetInterruptPending(false);
     }
 
+    // Flush the command window buffer (needed in gui mode)
+    static void mexflush(bool error) {
+      if (!casadi::InterruptHandler::is_main_thread()) {
+        casadi::Logger::flushDefault(error);
+        return;
+      }
+      if (!mexcheckinterrupted()) {
+        if (mexEvalString("drawnow('update');pause(0.0001);")) {
+          utSetInterruptPending(true);
+        }
+      }
+    }
 #endif
+
   }
 %}
 %init %{
@@ -195,6 +202,9 @@
   // @jgillis: please document
   casadi::InterruptHandler::checkInterrupted = casadi::mexcheckinterrupted;
   casadi::InterruptHandler::clearInterrupted = casadi::mexclearinterrupted;
+
+  casadi::InterruptHandler::is_main_thread();
+
 %}
 #endif
 
@@ -228,14 +238,14 @@
 
 import contextlib
 
-class _copyableObject(_object):
+class _copyableObject(object):
   def __copy__(self):
     return self.__class__(self)
 
   def __deepcopy__(self,dummy=None):
     return self.__class__(self)
 
-_object = _copyableObject
+_object = object = _copyableObject
 
 _swig_repr_default = _swig_repr
 def _swig_repr(self):
@@ -2623,6 +2633,40 @@ class NZproxy:
     fun=getattr(self, name)
     return fun(*args[1:])
 
+  def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+    conversion = {"multiply": "mul", "divide": "div", "true_divide": "div", "subtract":"sub","power":"pow","greater_equal":"ge","less_equal": "le", "less": "lt", "greater": "gt"}
+    name = ufunc.__name__
+    inputs = list(inputs)
+    if len(inputs)==3:
+      import warnings
+      warnings.warn("Error with %s. Looks like you are using an assignment operator, such as 'a+=b' where 'a' is a numpy type. This is not supported, and cannot be supported without changing numpy." % name, RuntimeWarning)
+      return NotImplemented
+    if "vectorized" in name:
+        name = name[:-len(" (vectorized)")]
+    if name in conversion:
+      name = conversion[name]
+    if len(inputs)==2 and inputs[1] is self and not(inputs[0] is self):
+      name = 'r' + name
+      inputs.reverse()
+    if not(hasattr(self,name)) or ('mul' in name):
+      name = '__' + name + '__'
+    try:
+      assert method=="__call__"
+      fun=getattr(self, name)
+      return fun(*inputs[1:])
+    except:
+      # Fall back to numpy conversion
+      new_inputs = list(inputs)
+      try:
+        new_inputs[0] = new_inputs[0].full()
+      except:
+        import warnings
+        warnings.warn("Implicit conversion of symbolic CasADi type to numeric matrix not supported.\n"
+                               + "This may occur when you pass a CasADi object to a numpy function.\n"
+                               + "Use an equivalent CasADi function instead of that numpy function.", RuntimeWarning)
+        return NotImplemented
+      return new_inputs[0].__array_ufunc__(ufunc, method, *new_inputs, **kwargs)
+
 
   def __array__(self,*args,**kwargs):
     import numpy as n
@@ -3501,6 +3545,10 @@ DECL M casadi_bspline(const M& x,
         casadi_int m,
         const Dict& opts = Dict()) {
   return bspline(x, coeffs, knots, degree, m, opts);
+}
+DECL M casadi_convexify(const M& H,
+        const Dict& opts = Dict()) {
+  return convexify(H, opts);
 }
 
 #endif

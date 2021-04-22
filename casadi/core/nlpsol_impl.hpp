@@ -77,6 +77,10 @@ namespace casadi {
     /// Throw an exception on failure?
     bool error_on_fail_;
 
+    /// Linear solver and options
+    std::string sens_linsol_;
+    Dict sens_linsol_options_;
+
     ///@{
     /** \brief Options */
     bool eval_errors_fatal_;
@@ -172,7 +176,7 @@ namespace casadi {
     virtual int solve(void* mem) const = 0;
 
     /** \brief Generate code for the function body */
-    void codegen_body(CodeGenerator& g) const override;
+    void nlpsol_codegen_body(CodeGenerator& g) const;
 
     /** \brief Do the derivative functions need nondifferentiated outputs? */
     bool uses_output() const override {return true;}
@@ -225,6 +229,9 @@ namespace casadi {
 
     /** \brief Get type name */
     std::string class_name() const override {return "Nlpsol";}
+
+    /** \brief Check if the function is of a particular type */
+    bool is_a(const std::string& type, bool recursive) const override;
 
     // Get reduced Hessian
     virtual DM getReducedHessian();

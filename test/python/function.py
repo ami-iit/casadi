@@ -37,6 +37,7 @@ try:
 except:
   pass
 
+
 class Functiontests(casadiTestCase):
 
   def test_call_empty(self):
@@ -1537,6 +1538,57 @@ class Functiontests(casadiTestCase):
 
       self.checkfunction(f,g,inputs=num_inputs,sens_der=False,hessian=False,fwd=False,evals=1)
 
+  def test_callback_jacobian_sparsity(self):
+    
+    x = MX.sym("x",2)
+
+    h = 1e-7
+    for with_jacobian_sparsity in [True, False]:
+      
+      calls = []
+
+      class Fun(Callback):
+
+          def __init__(self):
+            Callback.__init__(self)
+            self.construct("Fun", {"enable_fd":True,"fd_method":"forward","fd_options":{"h": h,"h_iter":False}})
+          def get_n_in(self): return 1
+          def get_n_out(self): return 1
+          def get_sparsity_in(self,i): return Sparsity.dense(2,1)
+          def get_sparsity_out(self,i): return Sparsity.dense(2,1)
+
+          def eval(self,arg):
+            x = arg[0]
+            calls.append((x-DM([5,7]))/h)
+            return [x**2]
+
+          def has_forward(self,nfwd): return False
+          def has_reverse(self,nadj): return False
+
+          def has_jacobian_sparsity(self): return with_jacobian_sparsity
+
+          def get_jacobian_sparsity(self):
+            return Sparsity.diag(2)
+
+      f = Fun()
+      y = jacobian(f(x),x)
+
+      F = Function('F',[x],[y])
+
+      with capture_stdout() as out:
+       J = F([5,7])
+      calls = hcat(calls)
+      J_ref = DM([[5*2,0],[0,7*2]])
+      if with_jacobian_sparsity:
+        self.checkarray(calls,DM([[0,0],[1,1]]).T,digits=5)
+        J_ref = sparsify(J_ref)
+      else:
+        self.checkarray(calls,DM([[0,0],[1,0],[0,1]]).T,digits=5)
+      
+      self.checkarray(J,J_ref,digits=5)
+      self.assertTrue(J.sparsity()==J_ref.sparsity())
+
+
   @requires_nlpsol("ipopt")
   def test_common_specific_options(self):
 
@@ -1596,6 +1648,8 @@ class Functiontests(casadiTestCase):
     with capture_stdout() as out:
       solver(x0=1)
 
+
+    DM.set_precision(6)
 
     self.assertTrue("[[1]," in out[0])
 
@@ -1881,7 +1935,7 @@ class Functiontests(casadiTestCase):
     LUT_param = casadi.interpolant('name','bspline',d_knots,2,{"algorithm": "smooth_linear","smooth_linear_frac":0.1})
     f = Function('LUTp',[xy],[LUT_param(xy,d_flat)])
     self.checkfunction(LUT,f, inputs=[vertcat(0.2,0.333)])
-    self.check_codegen(f,inputs=[vertcat(0.2,0.333)])
+    self.check_codegen(f,inputs=[vertcat(0.2,0.333)],main=True)
     self.check_serialize(f,inputs=[vertcat(0.2,0.333)])
 
 
@@ -2047,7 +2101,7 @@ class Functiontests(casadiTestCase):
       z = MX.sym("z")
 
       f = Function('f',[x,y,z],[x,y,z],["x","y","z"],["a","b","c"],{"default_in": [1,2,3]})
-      self.check_codegen(f,{"x":5,"z":3})
+      self.check_codegen(f,{"x":5,"z":3},main=True)
 
   def test_factory_inherit_options(self):
       x = MX.sym("x",5)
@@ -2386,9 +2440,14 @@ class Functiontests(casadiTestCase):
   def test_map_exception(self):
     x = MX.sym("x",4)
     y = MX.sym("y",4)
-    f = Function("f",[x],[x+y]);
+    f = Function("f",[x],[x+y])
 
-    with self.assertInException("Evaluation failed"):
+    if "CASADI_WITH_THREAD" in CasadiMeta.compiler_flags():
+      message = "Evaluation failed"
+    else:
+      message = "since variables [y] are free"
+
+    with self.assertInException(message):
       F = f.map(4,"thread",2)
       F(3)
 
@@ -2541,15 +2600,27 @@ class Functiontests(casadiTestCase):
   def test_codegen_inf_nan(self):
     x = MX.sym("x")
     f = Function("F",[x],[x+inf])
-    self.check_codegen(f,inputs=[1],std="c99")
+    self.check_codegen(f,inputs=[1],std="c99",main=True)
 
     x = MX.sym("x")
     f = Function("F",[x],[x+np.nan])
-    self.check_codegen(f,inputs=[1],std="c99")
+    self.check_codegen(f,inputs=[1],std="c99",main=True)
 
     x = MX.sym("x")
     f = Function("F",[x],[x+vertcat(inf,np.nan,-inf)])
-    self.check_codegen(f,inputs=[1],std="c99")
+    self.check_codegen(f,inputs=[1],std="c99",main=True)
+
+  def test_codegen_with_mem(self):
+    x = MX.sym("x")
+    f = Function("F",[x],[3*x])
+    self.check_codegen(f,inputs=[1],main=True,opts={"with_mem":True},definitions=["inline=''"])
+    self.check_codegen(f,inputs=[1],main=True,opts={"with_mem":True,"with_header":True},definitions=["inline=''"])
+
+  def test_codegen_scalars_bug(self):
+    x = MX.sym("x")
+    z = 3*x/sin(x)
+    f = Function("F",[x],[z,z/x],{"live_variables":False})
+    self.check_codegen(f,inputs=[1],opts={"codegen_scalars":True})
 
   def test_bug_codegen_logical(self):
     a = MX([1,0,0])
@@ -2557,6 +2628,102 @@ class Functiontests(casadiTestCase):
     c = logic_or(a,b)
     f = Function("f",[],[c])
     self.check_codegen(f,inputs=[])
+
+  def test_jit_serialize(self):
+    if not args.run_slow: return
+
+    def test_cases(jit_serialize):
+      opts = {"jit":True, "compiler": "shell", "jit_options": {"verbose":True}, "verbose":False, "jit_serialize": jit_serialize}
+      x = MX.sym("x")
+      yield lambda : Function('f',[x],[(x-3)**2],opts)
+
+      
+      x = MX.sym("x", 2)
+      f = x[0]*x[0] + x[1]*x[1]
+
+      if has_nlpsol("ipopt"):
+        yield lambda : nlpsol("solver", "ipopt", {"x": x, "f": f},opts)
+
+
+
+    for case in test_cases("source"):
+
+      with self.assertOutput(["jit_tmp"],[]):
+        f = case()
+
+      f.save('f.casadi')
+
+      with self.assertOutput(["jit_tmp"],[]):
+        g = Function.load('f.casadi')
+
+      self.checkfunction_light(f, g, inputs={})
+
+      g.save('f.casadi')
+      with self.assertOutput(["jit_tmp"],[]):
+        g = Function.load('f.casadi')
+
+      self.checkfunction_light(f, g, inputs={})
+
+
+
+    for case in test_cases("link"):
+
+      with self.assertOutput(["jit_tmp"],[]):
+        f = case()
+
+
+      f.save('f.casadi')
+
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+
+      self.checkfunction_light(f, g, inputs={})
+
+      g.save('f.casadi')
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+
+      self.checkfunction_light(f, g, inputs={})
+
+      f = None
+      g = None
+      with self.assertInException("No such file"):
+        g = Function.load('f.casadi')
+
+
+    for case in test_cases("embed"):
+
+      with self.assertOutput(["jit_tmp"],[]):
+        f = case()
+
+      f.save('f.casadi')
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+      g()
+      f = None
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+
+      g()
+      g.save('f.casadi')
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+      g()
+      g = None
+      with self.assertOutput([],["jit_tmp"]):
+        g = Function.load('f.casadi')
+
+
+  def test_map_get_function(self):
+    x = MX.sym("x")
+
+    g = Function("g",[x],[x**2])
+    ff = g.map(5)
+
+    self.assertTrue(len(ff.get_function())==1)
+    f2 = ff.get_function("f")
+
+    self.checkfunction_light(g, f2, inputs=[3])
           
 if __name__ == '__main__':
     unittest.main()

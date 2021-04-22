@@ -316,7 +316,7 @@ class SXtests(casadiTestCase):
     J=f.jacobian_old(0, 0)
     J_in = [0]*J.n_in();J_in[0]=L
     J_out = J.call(J_in)
-    Jr=matrix([[1,1],[3,2],[4,27]])
+    Jr=np.array([[1,1],[3,2],[4,27]])
     self.checkarray(J_out[0],Jr,"SXfunction jacobian evaluates incorrectly")
 
   def test_SX2(self):
@@ -363,14 +363,14 @@ class SXtests(casadiTestCase):
     self.checkarray(f.size_in(0),(2,3),"Function constructors")
     self.checkarray(f.size_out(0),(2,3),"Function constructors")
 
-    self.assertRaises(NotImplementedError,lambda: Function("f", y,[y,y]))
-    self.assertRaises(NotImplementedError,lambda: Function("f", x0,[x0,x1]))
+    self.assertRaises(TypeError if systemswig else NotImplementedError,lambda: Function("f", y,[y,y]))
+    self.assertRaises(TypeError if systemswig else NotImplementedError,lambda: Function("f", x0,[x0,x1]))
 
   def test_evalfail(self):
     self.message("eval fail test")
     x = SX.sym("x",2,2)
     f = Function("f", [x], [x])
-    self.assertRaises(NotImplementedError,lambda: f.call(x))
+    self.assertRaises(TypeError if systemswig else NotImplementedError,lambda: f.call(x))
 
   def test_SXconversion(self):
     self.message("Conversions from and to SX")
@@ -452,8 +452,8 @@ class SXtests(casadiTestCase):
 
   def test_sparseconstr(self):
     self.message("Check sparsity constructors")
-    self.checkarray(DM.ones(Sparsity.lower(3)).full(),matrix([[1,0,0],[1,1,0],[1,1,1]]),"tril")
-    self.checkarray(DM.ones(Sparsity.diag(3)).full(),matrix([[1,0,0],[0,1,0],[0,0,1]]),"diag")
+    self.checkarray(DM.ones(Sparsity.lower(3)).full(),np.array([[1,0,0],[1,1,0],[1,1,1]]),"tril")
+    self.checkarray(DM.ones(Sparsity.diag(3)).full(),np.array([[1,0,0],[0,1,0],[0,0,1]]),"diag")
 
   def test_subsassignment(self):
     self.message("Check subscripted assignment")
@@ -559,7 +559,7 @@ class SXtests(casadiTestCase):
     f_in = [0]*f.n_in();f_in[0]=x_
     f_in[1]=a_
     f_out = f.call(f_in)
-    self.checkarray(f_out[0],matrix([[x_*a_,a_],[1+a_*x_,0],[1,0]]),"taylor on dense matrices")
+    self.checkarray(f_out[0],np.array([[x_*a_,a_],[1+a_*x_,0],[1,0]]),"taylor on dense matrices")
 
   def test_null(self):
     self.message("Function null")
@@ -678,7 +678,7 @@ class SXtests(casadiTestCase):
     self.message("Regression test #181")
     x = SX.sym("x")
     #self.assertRaises(TypeError,lambda : SX([x,None]))  # FIXME: this is leaking memory
-    self.assertRaises(NotImplementedError,lambda: Function("f", [[x], [None]], [[2 * x]]))
+    self.assertRaises(TypeError if systemswig else NotImplementedError,lambda: Function("f", [[x], [None]], [[2 * x]]))
 
   @known_bug()  # Not implemented
   def test_is_equal(self):
@@ -1113,11 +1113,20 @@ class SXtests(casadiTestCase):
     c = SX(0,0)
     x = SX.sym("x",2,3)
 
-    with self.assertRaises(RuntimeError):
-      d = x + c
+    # https://github.com/casadi/casadi/issues/2628
+    if swig4:
+      with self.assertRaises(TypeError):
+        d = x + c
+    else:
+      with self.assertRaises(RuntimeError):
+        d = x + c
 
-    with self.assertRaises(RuntimeError):
-      d = x / c
+    if swig4:
+      with self.assertRaises(TypeError):
+        d = x / c
+    else:
+      with self.assertRaises(RuntimeError):
+        d = x / c
 
   def test_copysign(self):
     x = SX.sym("x")
@@ -1426,6 +1435,8 @@ class SXtests(casadiTestCase):
     with self.assertInException("since variables [x] are free"):
       evalf(x)
 
+  def test_ufunc(self):
+    y = np.sin(casadi.SX.sym('x'))
 
 
 

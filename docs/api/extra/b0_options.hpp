@@ -21,6 +21,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>solver</td><td>OT_STRING</td><td>AMPL solver binary</td><td>casadi::AmplInterface</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
@@ -58,6 +60,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>solver</td><td>OT_STRING</td><td>AMPL solver binary</td><td>casadi::AmplInterface</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
@@ -71,9 +75,11 @@
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
 <tr><td>algorithm</td><td>OT_STRING</td><td>Algorithm used for fitting the data: 'not_a_knot' (default, same as Matlab), 'smooth_linear'.</td><td>casadi::BSplineInterpolant</td></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>degree</td><td>OT_INTVECTOR</td><td>Sets, for each grid dimension, the degree of the spline.</td><td>casadi::BSplineInterpolant</td></tr>
 <tr><td>inline</td><td>OT_BOOL</td><td>Implement the lookup table in MX primitives. Useful when you need derivatives with respect to grid and/or coefficients. Such derivatives are fundamentally dense, so use with caution.</td><td>casadi::Interpolant</td></tr>
 <tr><td>linear_solver</td><td>OT_STRING</td><td>Solver used for constructing the coefficient tensor.</td><td>casadi::BSplineInterpolant</td></tr>
+<tr><td>linear_solver_options</td><td>OT_DICT</td><td>Options to be passed to the linear solver.</td><td>casadi::BSplineInterpolant</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Specifies, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; (default when #knots&lt;=100), 'exact' uses floored division (only for uniform grids), 'binary' uses a binary search. (default when #knots&gt;100).</td><td>casadi::Interpolant</td></tr>
 <tr><td>smooth_linear_frac</td><td>OT_DOUBLE</td><td>When 'smooth_linear' algorithm is active, determines sharpness between 0 (sharp, as linear interpolation) and 0.5 (smooth).Default value is 0.1.</td><td>casadi::BSplineInterpolant</td></tr>
 </table>
@@ -88,6 +94,7 @@
 <tr><td>algorithm</td><td>OT_STRING</td><td>Algorithm used for fitting the data: 'not_a_knot' (default, same as Matlab), 'smooth_linear'.</td></tr>
 <tr><td>degree</td><td>OT_INTVECTOR</td><td>Sets, for each grid dimension, the degree of the spline.</td></tr>
 <tr><td>linear_solver</td><td>OT_STRING</td><td>Solver used for constructing the coefficient tensor.</td></tr>
+<tr><td>linear_solver_options</td><td>OT_DICT</td><td>Options to be passed to the linear solver.</td></tr>
 <tr><td>smooth_linear_frac</td><td>OT_DOUBLE</td><td>When 'smooth_linear' algorithm is active, determines sharpness between 0 (sharp, as linear interpolation) and 0.5 (smooth).Default value is 0.1.</td></tr>
 </table>
 */
@@ -98,9 +105,11 @@
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
 <tr><td>algorithm</td><td>OT_STRING</td><td>Algorithm used for fitting the data: 'not_a_knot' (default, same as Matlab), 'smooth_linear'.</td><td>casadi::BSplineInterpolant</td></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>degree</td><td>OT_INTVECTOR</td><td>Sets, for each grid dimension, the degree of the spline.</td><td>casadi::BSplineInterpolant</td></tr>
 <tr><td>inline</td><td>OT_BOOL</td><td>Implement the lookup table in MX primitives. Useful when you need derivatives with respect to grid and/or coefficients. Such derivatives are fundamentally dense, so use with caution.</td><td>casadi::Interpolant</td></tr>
 <tr><td>linear_solver</td><td>OT_STRING</td><td>Solver used for constructing the coefficient tensor.</td><td>casadi::BSplineInterpolant</td></tr>
+<tr><td>linear_solver_options</td><td>OT_DICT</td><td>Options to be passed to the linear solver.</td><td>casadi::BSplineInterpolant</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Specifies, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; (default when #knots&lt;=100), 'exact' uses floored division (only for uniform grids), 'binary' uses a binary search. (default when #knots&gt;100).</td><td>casadi::Interpolant</td></tr>
 <tr><td>smooth_linear_frac</td><td>OT_DOUBLE</td><td>When 'smooth_linear' algorithm is active, determines sharpness between 0 (sharp, as linear interpolation) and 0.5 (smooth).Default value is 0.1.</td><td>casadi::BSplineInterpolant</td></tr>
 </table>
@@ -145,6 +154,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -237,6 +247,8 @@
 <tr><td>s_f</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>s_theta</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>schur</td><td>OT_BOOL</td><td>Use qpOASES Schur compliment approach</td><td>casadi::Blocksqp</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>skip_first_globalization</td><td>OT_BOOL</td><td>No globalization strategy in first iteration</td><td>casadi::Blocksqp</td></tr>
 <tr><td>theta_max</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>theta_min</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
@@ -384,6 +396,8 @@
 <tr><td>s_f</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>s_theta</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>schur</td><td>OT_BOOL</td><td>Use qpOASES Schur compliment approach</td><td>casadi::Blocksqp</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>skip_first_globalization</td><td>OT_BOOL</td><td>No globalization strategy in first iteration</td><td>casadi::Blocksqp</td></tr>
 <tr><td>theta_max</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
 <tr><td>theta_min</td><td>OT_DOUBLE</td><td>Filter line search parameter, cf. IPOPT paper</td><td>casadi::Blocksqp</td></tr>
@@ -429,6 +443,8 @@
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>pass_nonlinear_constraints</td><td>OT_BOOL</td><td>Pass list of constraints entering nonlinearly to BONMIN</td><td>casadi::BonMinMessageHandler</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to BONMIN</td><td>casadi::BonMinMessageHandler</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>sos1_groups</td><td>OT_INTVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonMinMessageHandler</td></tr>
 <tr><td>sos1_priorities</td><td>OT_INTVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonMinMessageHandler</td></tr>
 <tr><td>sos1_weights</td><td>OT_DOUBLEVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonMinMessageHandler</td></tr>
@@ -475,6 +491,8 @@
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>pass_nonlinear_constraints</td><td>OT_BOOL</td><td>Pass list of constraints entering nonlinearly to BONMIN</td><td>casadi::BonminInterface</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to BONMIN</td><td>casadi::BonminInterface</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>sos1_groups</td><td>OT_INTVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
 <tr><td>sos1_priorities</td><td>OT_INTVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
 <tr><td>sos1_weights</td><td>OT_DOUBLEVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
@@ -546,6 +564,8 @@
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>pass_nonlinear_constraints</td><td>OT_BOOL</td><td>Pass list of constraints entering nonlinearly to BONMIN</td><td>casadi::BonminInterface</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to BONMIN</td><td>casadi::BonminInterface</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>sos1_groups</td><td>OT_INTVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
 <tr><td>sos1_priorities</td><td>OT_INTVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
 <tr><td>sos1_weights</td><td>OT_DOUBLEVECTORVECTOR</td><td>Options for the autogenerated gradient of the objective.</td><td>casadi::BonminInterface</td></tr>
@@ -643,6 +663,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -836,6 +857,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -888,6 +910,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -987,6 +1010,8 @@
 <tr><td>max_multistep_order</td><td>OT_INT</td><td>Maximum order for the (variable-order) multistep method</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_num_steps</td><td>OT_INT</td><td>Maximum number of integrator steps</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_order</td><td>OT_DOUBLE</td><td>Maximum order</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>max_step_size</td><td>OT_DOUBLE</td><td>Max step size [default: 0/inf]</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>min_step_size</td><td>OT_DOUBLE</td><td>Min step size [default: 0/0.0]</td><td>casadi::CvodesInterface</td></tr>
 <tr><td>newton_scheme</td><td>OT_STRING</td><td>Linear solver scheme in the Newton method: DIRECT|gmres|bcgstab|tfqmr</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlin_conv_coeff</td><td>OT_DOUBLE</td><td>Coefficient in the nonlinear convergence test</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlinear_solver_iteration</td><td>OT_STRING</td><td>Nonlinear solver type: NEWTON|functional</td><td>casadi::CvodesInterface</td></tr>
@@ -1019,6 +1044,8 @@
 <tr><td>max_multistep_order</td><td>OT_INT</td><td>Maximum order for the (variable-order) multistep method</td></tr>
 <tr><td>max_num_steps</td><td>OT_INT</td><td>Maximum number of integrator steps</td></tr>
 <tr><td>max_order</td><td>OT_DOUBLE</td><td>Maximum order</td></tr>
+<tr><td>max_step_size</td><td>OT_DOUBLE</td><td>Max step size [default: 0/inf]</td></tr>
+<tr><td>min_step_size</td><td>OT_DOUBLE</td><td>Min step size [default: 0/0.0]</td></tr>
 <tr><td>newton_scheme</td><td>OT_STRING</td><td>Linear solver scheme in the Newton method: DIRECT|gmres|bcgstab|tfqmr</td></tr>
 <tr><td>nonlin_conv_coeff</td><td>OT_DOUBLE</td><td>Coefficient in the nonlinear convergence test</td></tr>
 <tr><td>nonlinear_solver_iteration</td><td>OT_STRING</td><td>Nonlinear solver type: NEWTON|functional</td></tr>
@@ -1050,6 +1077,8 @@
 <tr><td>max_multistep_order</td><td>OT_INT</td><td>Maximum order for the (variable-order) multistep method</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_num_steps</td><td>OT_INT</td><td>Maximum number of integrator steps</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_order</td><td>OT_DOUBLE</td><td>Maximum order</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>max_step_size</td><td>OT_DOUBLE</td><td>Max step size [default: 0/inf]</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>min_step_size</td><td>OT_DOUBLE</td><td>Min step size [default: 0/0.0]</td><td>casadi::CvodesInterface</td></tr>
 <tr><td>newton_scheme</td><td>OT_STRING</td><td>Linear solver scheme in the Newton method: DIRECT|gmres|bcgstab|tfqmr</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlin_conv_coeff</td><td>OT_DOUBLE</td><td>Coefficient in the nonlinear convergence test</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlinear_solver_iteration</td><td>OT_STRING</td><td>Nonlinear solver type: NEWTON|functional</td><td>casadi::CvodesInterface</td></tr>
@@ -1121,6 +1150,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1174,6 +1204,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1225,6 +1256,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1275,6 +1307,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1378,6 +1411,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1487,6 +1521,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1541,6 +1576,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1588,6 +1624,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -1666,6 +1703,7 @@
 <tr><td>ng</td><td>OT_INTVECTOR</td><td>Number of non-dynamic constraints, length N+1</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>nu</td><td>OT_INTVECTOR</td><td>Number of controls, length N</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>nx</td><td>OT_INTVECTOR</td><td>Number of states, length N+1</td><td>casadi::HpmpcInterface</td></tr>
+<tr><td>print_level</td><td>OT_INT</td><td>Amount of diagnostic printing [Default: 1].</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>print_problem</td><td>OT_BOOL</td><td>Print a numeric description of the problem</td><td>casadi::Conic</td></tr>
 <tr><td>target</td><td>OT_STRING</td><td>hpmpc target</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>tol</td><td>OT_DOUBLE</td><td>Tolerance in the duality measure</td><td>casadi::HpmpcInterface</td></tr>
@@ -1687,6 +1725,7 @@
 <tr><td>ng</td><td>OT_INTVECTOR</td><td>Number of non-dynamic constraints, length N+1</td></tr>
 <tr><td>nu</td><td>OT_INTVECTOR</td><td>Number of controls, length N</td></tr>
 <tr><td>nx</td><td>OT_INTVECTOR</td><td>Number of states, length N+1</td></tr>
+<tr><td>print_level</td><td>OT_INT</td><td>Amount of diagnostic printing [Default: 1].</td></tr>
 <tr><td>target</td><td>OT_STRING</td><td>hpmpc target</td></tr>
 <tr><td>tol</td><td>OT_DOUBLE</td><td>Tolerance in the duality measure</td></tr>
 <tr><td>warm_start</td><td>OT_BOOL</td><td>Use warm-starting</td></tr>
@@ -1708,6 +1747,7 @@
 <tr><td>ng</td><td>OT_INTVECTOR</td><td>Number of non-dynamic constraints, length N+1</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>nu</td><td>OT_INTVECTOR</td><td>Number of controls, length N</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>nx</td><td>OT_INTVECTOR</td><td>Number of states, length N+1</td><td>casadi::HpmpcInterface</td></tr>
+<tr><td>print_level</td><td>OT_INT</td><td>Amount of diagnostic printing [Default: 1].</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>print_problem</td><td>OT_BOOL</td><td>Print a numeric description of the problem</td><td>casadi::Conic</td></tr>
 <tr><td>target</td><td>OT_STRING</td><td>hpmpc target</td><td>casadi::HpmpcInterface</td></tr>
 <tr><td>tol</td><td>OT_DOUBLE</td><td>Tolerance in the duality measure</td><td>casadi::HpmpcInterface</td></tr>
@@ -1726,6 +1766,7 @@
 <tr><td>calc_ic</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions.</td><td>casadi::IdasInterface</td></tr>
 <tr><td>calc_icB</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions for backwards system [default: equal to calc_ic].</td><td>casadi::IdasInterface</td></tr>
 <tr><td>cj_scaling</td><td>OT_BOOL</td><td>IDAS scaling on cj for the user-defined linear solver module</td><td>casadi::IdasInterface</td></tr>
+<tr><td>constraints</td><td>OT_INTVECTOR</td><td>Constrain the solution y=[x,z]. 0 (default): no constraint on yi, 1: yi &gt;= 0.0, -1: yi &lt;= 0.0, 2: yi &gt; 0.0, -2: yi &lt; 0.0.</td><td>casadi::IdasInterface</td></tr>
 <tr><td>disable_internal_warnings</td><td>OT_BOOL</td><td>Disable SUNDIALS internal warning messages</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>first_time</td><td>OT_DOUBLE</td><td>First requested time as a fraction of the time interval</td><td>casadi::IdasInterface</td></tr>
 <tr><td>fsens_err_con</td><td>OT_BOOL</td><td>include the forward sensitivities in all error controls</td><td>casadi::SundialsInterface</td></tr>
@@ -1763,6 +1804,7 @@
 <tr><td>calc_ic</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions.</td></tr>
 <tr><td>calc_icB</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions for backwards system [default: equal to calc_ic].</td></tr>
 <tr><td>cj_scaling</td><td>OT_BOOL</td><td>IDAS scaling on cj for the user-defined linear solver module</td></tr>
+<tr><td>constraints</td><td>OT_INTVECTOR</td><td>Constrain the solution y=[x,z]. 0 (default): no constraint on yi, 1: yi &gt;= 0.0, -1: yi &lt;= 0.0, 2: yi &gt; 0.0, -2: yi &lt; 0.0.</td></tr>
 <tr><td>disable_internal_warnings</td><td>OT_BOOL</td><td>Disable SUNDIALS internal warning messages</td></tr>
 <tr><td>first_time</td><td>OT_DOUBLE</td><td>First requested time as a fraction of the time interval</td></tr>
 <tr><td>fsens_err_con</td><td>OT_BOOL</td><td>include the forward sensitivities in all error controls</td></tr>
@@ -1799,6 +1841,7 @@
 <tr><td>calc_ic</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions.</td><td>casadi::IdasInterface</td></tr>
 <tr><td>calc_icB</td><td>OT_BOOL</td><td>Use IDACalcIC to get consistent initial conditions for backwards system [default: equal to calc_ic].</td><td>casadi::IdasInterface</td></tr>
 <tr><td>cj_scaling</td><td>OT_BOOL</td><td>IDAS scaling on cj for the user-defined linear solver module</td><td>casadi::IdasInterface</td></tr>
+<tr><td>constraints</td><td>OT_INTVECTOR</td><td>Constrain the solution y=[x,z]. 0 (default): no constraint on yi, 1: yi &gt;= 0.0, -1: yi &lt;= 0.0, 2: yi &gt; 0.0, -2: yi &lt; 0.0.</td><td>casadi::IdasInterface</td></tr>
 <tr><td>disable_internal_warnings</td><td>OT_BOOL</td><td>Disable SUNDIALS internal warning messages</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>first_time</td><td>OT_DOUBLE</td><td>First requested time as a fraction of the time interval</td><td>casadi::IdasInterface</td></tr>
 <tr><td>fsens_err_con</td><td>OT_BOOL</td><td>include the forward sensitivities in all error controls</td><td>casadi::SundialsInterface</td></tr>
@@ -2000,6 +2043,7 @@
 <tr><td>ad_weight</td><td>OT_DOUBLE</td><td>Weighting factor for derivative calculation.When there is an option of either using forward or reverse mode directional derivatives, the condition ad_weight*nf&lt;=(1-ad_weight)*na is used where nf and na are estimates of the number of forward/reverse mode directional derivatives needed. By default, ad_weight is calculated automatically, but this can be overridden by setting this option. In particular, 0 means forcing forward mode and 1 forcing reverse mode. Leave unset for (class specific) heuristics.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>ad_weight_sp</td><td>OT_DOUBLE</td><td>Weighting factor for sparsity pattern calculation calculation.Overrides default behavior. Set to 0 and 1 to force forward and reverse mode respectively. Cf. option \"ad_weight\". When set to -1, sparsity is completely ignored and dense matrices are used.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>always_inline</td><td>OT_BOOL</td><td>Force inlining.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>compiler</td><td>OT_STRING</td><td>Just-in-time compiler plugin to be used.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>custom_jacobian</td><td>OT_FUNCTION</td><td>Override CasADi's AD. Use together with 'jac_penalty': 0. Note: Highly experimental. Syntax may break often.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>derivative_of</td><td>OT_FUNCTION</td><td>The function is a derivative of another function. The type of derivative (directional derivative, Jacobian) is inferred from the function name.</td><td>casadi::FunctionInternal</td></tr>
@@ -2026,6 +2070,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Specifies, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; (default when #knots&lt;=100), 'exact' uses floored division (only for uniform grids), 'binary' uses a binary search. (default when #knots&gt;100).</td><td>casadi::Interpolant</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
@@ -2051,6 +2096,7 @@
 <tr><td>ad_weight</td><td>OT_DOUBLE</td><td>Weighting factor for derivative calculation.When there is an option of either using forward or reverse mode directional derivatives, the condition ad_weight*nf&lt;=(1-ad_weight)*na is used where nf and na are estimates of the number of forward/reverse mode directional derivatives needed. By default, ad_weight is calculated automatically, but this can be overridden by setting this option. In particular, 0 means forcing forward mode and 1 forcing reverse mode. Leave unset for (class specific) heuristics.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>ad_weight_sp</td><td>OT_DOUBLE</td><td>Weighting factor for sparsity pattern calculation calculation.Overrides default behavior. Set to 0 and 1 to force forward and reverse mode respectively. Cf. option \"ad_weight\". When set to -1, sparsity is completely ignored and dense matrices are used.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>always_inline</td><td>OT_BOOL</td><td>Force inlining.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>compiler</td><td>OT_STRING</td><td>Just-in-time compiler plugin to be used.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>custom_jacobian</td><td>OT_FUNCTION</td><td>Override CasADi's AD. Use together with 'jac_penalty': 0. Note: Highly experimental. Syntax may break often.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>derivative_of</td><td>OT_FUNCTION</td><td>The function is a derivative of another function. The type of derivative (directional derivative, Jacobian) is inferred from the function name.</td><td>casadi::FunctionInternal</td></tr>
@@ -2077,6 +2123,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Specifies, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; (default when #knots&lt;=100), 'exact' uses floored division (only for uniform grids), 'binary' uses a binary search. (default when #knots&gt;100).</td><td>casadi::Interpolant</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
@@ -2105,24 +2152,32 @@
 <tr><td>calc_lam_p</td><td>OT_BOOL</td><td>Calculate 'lam_p' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_lam_x</td><td>OT_BOOL</td><td>Calculate 'lam_x' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_multipliers</td><td>OT_BOOL</td><td>Calculate Lagrange multipliers in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
+<tr><td>clip_inactive_lam</td><td>OT_BOOL</td><td>Explicitly set Lagrange multipliers to 0 when bound is deemed inactive (default: false).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_string_md</td><td>OT_DICT</td><td>String metadata (a dictionary with lists of strings) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>discrete</td><td>OT_BOOLVECTOR</td><td>Indicates which of the variables are discrete, i.e. integer-valued</td><td>casadi::Nlpsol</td></tr>
 <tr><td>error_on_fail</td><td>OT_BOOL</td><td>When the numerical process returns unsuccessfully, raise an error (default false).</td><td>casadi::Nlpsol</td></tr>
 <tr><td>eval_errors_fatal</td><td>OT_BOOL</td><td>When errors occur during evaluation of f,g,...,stop the iterations</td><td>casadi::Nlpsol</td></tr>
 <tr><td>grad_f</td><td>OT_FUNCTION</td><td>Function for calculating the gradient of the objective (column, autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>hess_lag</td><td>OT_FUNCTION</td><td>Function for calculating the Hessian of the Lagrangian (autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>ignore_check_vec</td><td>OT_BOOL</td><td>If set to true, the input shape of F will not be checked.</td><td>casadi::Nlpsol</td></tr>
+<tr><td>inactive_lam_strategy</td><td>OT_STRING</td><td>Strategy to detect if a bound is inactive. RELTOL: use solver-defined constraint tolerance * inactive_lam_value|abstol: use inactive_lam_value</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>inactive_lam_value</td><td>OT_DOUBLE</td><td>Value used in inactive_lam_strategy (default: 10).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>ipopt</td><td>OT_DICT</td><td>Options to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>iteration_callback</td><td>OT_FUNCTION</td><td>A function that will be called at each iteration with the solver as input. Check documentation of Callback.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>iteration_callback_ignore_errors</td><td>OT_BOOL</td><td>If set to true, errors thrown by iteration_callback will be ignored.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>iteration_callback_step</td><td>OT_INT</td><td>Only call the callback function every few iterations.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>jac_g</td><td>OT_FUNCTION</td><td>Function for calculating the Jacobian of the constraints (autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>max_iter_eig</td><td>OT_DOUBLE</td><td>Maximum number of iterations to compute an eigenvalue decomposition (default: 50).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to IPOPT</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>var_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>var_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>var_string_md</td><td>OT_DICT</td><td>String metadata (a dictionary with lists of strings) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
@@ -2137,13 +2192,19 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th></tr>
+<tr><td>clip_inactive_lam</td><td>OT_BOOL</td><td>Explicitly set Lagrange multipliers to 0 when bound is deemed inactive (default: false).</td></tr>
 <tr><td>con_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about constraints to be passed to IPOPT</td></tr>
 <tr><td>con_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about constraints to be passed to IPOPT</td></tr>
 <tr><td>con_string_md</td><td>OT_DICT</td><td>String metadata (a dictionary with lists of strings) about constraints to be passed to IPOPT</td></tr>
+<tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td></tr>
 <tr><td>grad_f</td><td>OT_FUNCTION</td><td>Function for calculating the gradient of the objective (column, autogenerated by default)</td></tr>
 <tr><td>hess_lag</td><td>OT_FUNCTION</td><td>Function for calculating the Hessian of the Lagrangian (autogenerated by default)</td></tr>
+<tr><td>inactive_lam_strategy</td><td>OT_STRING</td><td>Strategy to detect if a bound is inactive. RELTOL: use solver-defined constraint tolerance * inactive_lam_value|abstol: use inactive_lam_value</td></tr>
+<tr><td>inactive_lam_value</td><td>OT_DOUBLE</td><td>Value used in inactive_lam_strategy (default: 10).</td></tr>
 <tr><td>ipopt</td><td>OT_DICT</td><td>Options to be passed to IPOPT</td></tr>
 <tr><td>jac_g</td><td>OT_FUNCTION</td><td>Function for calculating the Jacobian of the constraints (autogenerated by default)</td></tr>
+<tr><td>max_iter_eig</td><td>OT_DOUBLE</td><td>Maximum number of iterations to compute an eigenvalue decomposition (default: 50).</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to IPOPT</td></tr>
 <tr><td>var_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about variables to be passed to IPOPT</td></tr>
 <tr><td>var_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about variables to be passed to IPOPT</td></tr>
@@ -2162,24 +2223,32 @@
 <tr><td>calc_lam_p</td><td>OT_BOOL</td><td>Calculate 'lam_p' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_lam_x</td><td>OT_BOOL</td><td>Calculate 'lam_x' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_multipliers</td><td>OT_BOOL</td><td>Calculate Lagrange multipliers in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
+<tr><td>clip_inactive_lam</td><td>OT_BOOL</td><td>Explicitly set Lagrange multipliers to 0 when bound is deemed inactive (default: false).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>con_string_md</td><td>OT_DICT</td><td>String metadata (a dictionary with lists of strings) about constraints to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>discrete</td><td>OT_BOOLVECTOR</td><td>Indicates which of the variables are discrete, i.e. integer-valued</td><td>casadi::Nlpsol</td></tr>
 <tr><td>error_on_fail</td><td>OT_BOOL</td><td>When the numerical process returns unsuccessfully, raise an error (default false).</td><td>casadi::Nlpsol</td></tr>
 <tr><td>eval_errors_fatal</td><td>OT_BOOL</td><td>When errors occur during evaluation of f,g,...,stop the iterations</td><td>casadi::Nlpsol</td></tr>
 <tr><td>grad_f</td><td>OT_FUNCTION</td><td>Function for calculating the gradient of the objective (column, autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>hess_lag</td><td>OT_FUNCTION</td><td>Function for calculating the Hessian of the Lagrangian (autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>ignore_check_vec</td><td>OT_BOOL</td><td>If set to true, the input shape of F will not be checked.</td><td>casadi::Nlpsol</td></tr>
+<tr><td>inactive_lam_strategy</td><td>OT_STRING</td><td>Strategy to detect if a bound is inactive. RELTOL: use solver-defined constraint tolerance * inactive_lam_value|abstol: use inactive_lam_value</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>inactive_lam_value</td><td>OT_DOUBLE</td><td>Value used in inactive_lam_strategy (default: 10).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>ipopt</td><td>OT_DICT</td><td>Options to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>iteration_callback</td><td>OT_FUNCTION</td><td>A function that will be called at each iteration with the solver as input. Check documentation of Callback.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>iteration_callback_ignore_errors</td><td>OT_BOOL</td><td>If set to true, errors thrown by iteration_callback will be ignored.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>iteration_callback_step</td><td>OT_INT</td><td>Only call the callback function every few iterations.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>jac_g</td><td>OT_FUNCTION</td><td>Function for calculating the Jacobian of the constraints (autogenerated by default)</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>max_iter_eig</td><td>OT_DOUBLE</td><td>Maximum number of iterations to compute an eigenvalue decomposition (default: 50).</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>pass_nonlinear_variables</td><td>OT_BOOL</td><td>Pass list of variables entering nonlinearly to IPOPT</td><td>casadi::IpoptInterface</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>var_integer_md</td><td>OT_DICT</td><td>Integer metadata (a dictionary with lists of integers) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>var_numeric_md</td><td>OT_DICT</td><td>Numeric metadata (a dictionary with lists of reals) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
 <tr><td>var_string_md</td><td>OT_DICT</td><td>String metadata (a dictionary with lists of strings) about variables to be passed to IPOPT</td><td>casadi::IpoptInterface</td></tr>
@@ -2225,6 +2294,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -2349,6 +2419,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
 </table>
@@ -2392,6 +2464,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
 </table>
@@ -2433,6 +2507,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -2494,6 +2569,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -2543,6 +2619,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_nrhs</td><td>OT_INT</td><td>Maximum number of right-hand-sides that get processed in a single pass [default:10].</td><td>casadi::LapackQr</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
@@ -2602,6 +2679,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_nrhs</td><td>OT_INT</td><td>Maximum number of right-hand-sides that get processed in a single pass [default:10].</td><td>casadi::LapackQr</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
@@ -2624,6 +2702,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>inline</td><td>OT_BOOL</td><td>Implement the lookup table in MX primitives. Useful when you need derivatives with respect to grid and/or coefficients. Such derivatives are fundamentally dense, so use with caution.</td><td>casadi::Interpolant</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Sets, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; 'exact' uses floored division (only for uniform grids).</td><td>casadi::LinearInterpolant</td></tr>
 </table>
@@ -2644,6 +2723,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>inline</td><td>OT_BOOL</td><td>Implement the lookup table in MX primitives. Useful when you need derivatives with respect to grid and/or coefficients. Such derivatives are fundamentally dense, so use with caution.</td><td>casadi::Interpolant</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Sets, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; 'exact' uses floored division (only for uniform grids).</td><td>casadi::LinearInterpolant</td></tr>
 </table>
@@ -2655,6 +2735,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
+<tr><td>batch_x</td><td>OT_INT</td><td>Evaluate a batch of different inputs at once (default 1).</td><td>casadi::Interpolant</td></tr>
 <tr><td>inline</td><td>OT_BOOL</td><td>Implement the lookup table in MX primitives. Useful when you need derivatives with respect to grid and/or coefficients. Such derivatives are fundamentally dense, so use with caution.</td><td>casadi::Interpolant</td></tr>
 <tr><td>lookup_mode</td><td>OT_STRINGVECTOR</td><td>Sets, for each grid dimenion, the lookup algorithm used to find the correct index. 'linear' uses a for-loop + break; 'exact' uses floored division (only for uniform grids).</td><td>casadi::LinearInterpolantJac</td></tr>
 </table>
@@ -2696,6 +2777,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::ProtoFunction</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::ProtoFunction</td></tr>
@@ -2757,6 +2839,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::ProtoFunction</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::ProtoFunction</td></tr>
@@ -2779,6 +2862,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
+<tr><td>cache</td><td>OT_DOUBLE</td><td>Amount of factorisations to remember (thread-local) [0]</td><td>casadi::LinsolQr</td></tr>
 <tr><td>eps</td><td>OT_DOUBLE</td><td>Minimum R entry before singularity is declared [1e-12]</td><td>casadi::LinsolQr</td></tr>
 </table>
 */
@@ -2789,6 +2873,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th></tr>
+<tr><td>cache</td><td>OT_DOUBLE</td><td>Amount of factorisations to remember (thread-local) [0]</td></tr>
 <tr><td>eps</td><td>OT_DOUBLE</td><td>Minimum R entry before singularity is declared [1e-12]</td></tr>
 </table>
 */
@@ -2798,6 +2883,7 @@
 <a name='options'></a><table>
 <caption>List of available options</caption>
 <tr><th>Id</th><th>Type</th><th>Description</th><th>Used in</th></tr>
+<tr><td>cache</td><td>OT_DOUBLE</td><td>Amount of factorisations to remember (thread-local) [0]</td><td>casadi::LinsolQr</td></tr>
 <tr><td>eps</td><td>OT_DOUBLE</td><td>Minimum R entry before singularity is declared [1e-12]</td><td>casadi::LinsolQr</td></tr>
 </table>
 */
@@ -2837,6 +2923,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>live_variables</td><td>OT_BOOL</td><td>Reuse variables in the work vector</td><td>casadi::MXFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
@@ -2888,6 +2975,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::ProtoFunction</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::ProtoFunction</td></tr>
@@ -2949,6 +3037,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::ProtoFunction</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::ProtoFunction</td></tr>
@@ -3046,6 +3135,8 @@
 <tr><td>monitor</td><td>OT_STRINGVECTOR</td><td>Set of user problem functions to be monitored</td><td>casadi::OracleFunction</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>show_eval_warnings</td><td>OT_BOOL</td><td>Show warnings generated from function evaluations [true]</td><td>casadi::OracleFunction</td></tr>
 <tr><td>specific_options</td><td>OT_DICT</td><td>Options for specific auto-generated functions, overwriting the defaults from common_options. Nested dictionary.</td><td>casadi::OracleFunction</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -3078,6 +3169,8 @@
 <tr><td>monitor</td><td>OT_STRINGVECTOR</td><td>Set of user problem functions to be monitored</td><td>casadi::OracleFunction</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>show_eval_warnings</td><td>OT_BOOL</td><td>Show warnings generated from function evaluations [true]</td><td>casadi::OracleFunction</td></tr>
 <tr><td>specific_options</td><td>OT_DICT</td><td>Options for specific auto-generated functions, overwriting the defaults from common_options. Nested dictionary.</td><td>casadi::OracleFunction</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -3162,6 +3255,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>monitor</td><td>OT_STRINGVECTOR</td><td>Set of user problem functions to be monitored</td><td>casadi::OracleFunction</td></tr>
@@ -3256,6 +3350,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::ProtoFunction</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::ProtoFunction</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::ProtoFunction</td></tr>
@@ -3545,6 +3640,8 @@
 <tr><td>qpsol</td><td>OT_STRING</td><td>The QP solver to be used by the SQP method [qrqp]</td><td>casadi::Qrsqp</td></tr>
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Qrsqp</td></tr>
 <tr><td>regularize</td><td>OT_BOOL</td><td>Automatic regularization of Lagrange Hessian.</td><td>casadi::Qrsqp</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Qrsqp</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Qrsqp</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -3612,6 +3709,8 @@
 <tr><td>qpsol</td><td>OT_STRING</td><td>The QP solver to be used by the SQP method [qrqp]</td><td>casadi::Qrsqp</td></tr>
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Qrsqp</td></tr>
 <tr><td>regularize</td><td>OT_BOOL</td><td>Automatic regularization of Lagrange Hessian.</td><td>casadi::Qrsqp</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Qrsqp</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Qrsqp</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -3696,6 +3795,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>just_in_time_opencl</td><td>OT_BOOL</td><td>Just-in-time compilation for numeric evaluation using OpenCL (experimental)</td><td>casadi::SXFunction</td></tr>
 <tr><td>just_in_time_sparsity</td><td>OT_BOOL</td><td>Propagate sparsity patterns using just-in-time compilation to a CPU or GPU using OpenCL</td><td>casadi::SXFunction</td></tr>
@@ -3753,6 +3853,8 @@
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Scpgen</td></tr>
 <tr><td>reg_threshold</td><td>OT_DOUBLE</td><td>Threshold for the regularization.</td><td>casadi::Scpgen</td></tr>
 <tr><td>regularize</td><td>OT_BOOL</td><td>Automatic regularization of Lagrange Hessian.</td><td>casadi::Scpgen</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Scpgen</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Scpgen</td></tr>
 <tr><td>tol_pr_step</td><td>OT_DOUBLE</td><td>Stopping criterion for the step size</td><td>casadi::Scpgen</td></tr>
@@ -3828,6 +3930,8 @@
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Scpgen</td></tr>
 <tr><td>reg_threshold</td><td>OT_DOUBLE</td><td>Threshold for the regularization.</td><td>casadi::Scpgen</td></tr>
 <tr><td>regularize</td><td>OT_BOOL</td><td>Automatic regularization of Lagrange Hessian.</td><td>casadi::Scpgen</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Scpgen</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Scpgen</td></tr>
 <tr><td>tol_pr_step</td><td>OT_DOUBLE</td><td>Stopping criterion for the step size</td><td>casadi::Scpgen</td></tr>
@@ -3989,6 +4093,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -4031,6 +4136,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>snopt</td><td>OT_DICT</td><td>Options to be passed to SNOPT</td><td>casadi::SnoptInterface</td></tr>
 <tr><td>start</td><td>OT_STRING</td><td>Warm-start options for Worhp: cold|warm|hot</td><td>casadi::SnoptInterface</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -4070,6 +4177,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>snopt</td><td>OT_DICT</td><td>Options to be passed to SNOPT</td><td>casadi::SnoptInterface</td></tr>
 <tr><td>start</td><td>OT_STRING</td><td>Warm-start options for Worhp: cold|warm|hot</td><td>casadi::SnoptInterface</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -4092,7 +4201,7 @@
 <tr><td>calc_lam_x</td><td>OT_BOOL</td><td>Calculate 'lam_x' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_multipliers</td><td>OT_BOOL</td><td>Calculate Lagrange multipliers in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td><td>casadi::Sqpmethod</td></tr>
-<tr><td>convexify_strategy</td><td>OT_STRING</td><td>none|regularize|eigen-reflect|eigen-clip. Default: none.</td><td>casadi::Sqpmethod</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>discrete</td><td>OT_BOOLVECTOR</td><td>Indicates which of the variables are discrete, i.e. integer-valued</td><td>casadi::Nlpsol</td></tr>
 <tr><td>error_on_fail</td><td>OT_BOOL</td><td>When the numerical process returns unsuccessfully, raise an error (default false).</td><td>casadi::Nlpsol</td></tr>
 <tr><td>eval_errors_fatal</td><td>OT_BOOL</td><td>When errors occur during evaluation of f,g,...,stop the iterations</td><td>casadi::Nlpsol</td></tr>
@@ -4118,6 +4227,8 @@
 <tr><td>print_status</td><td>OT_BOOL</td><td>Print a status message after solving</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>qpsol</td><td>OT_STRING</td><td>The QP solver to be used by the SQP method [qpoases]</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Sqpmethod</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -4134,7 +4245,7 @@
 <tr><td>beta</td><td>OT_DOUBLE</td><td>Line-search parameter, restoration factor of stepsize</td></tr>
 <tr><td>c1</td><td>OT_DOUBLE</td><td>Armijo condition, coefficient of decrease in merit</td></tr>
 <tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td></tr>
-<tr><td>convexify_strategy</td><td>OT_STRING</td><td>none|regularize|eigen-reflect|eigen-clip. Default: none.</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td></tr>
 <tr><td>hess_lag</td><td>OT_FUNCTION</td><td>Function for calculating the Hessian of the Lagrangian (autogenerated by default)</td></tr>
 <tr><td>hessian_approximation</td><td>OT_STRING</td><td>limited-memory|exact</td></tr>
 <tr><td>jac_fg</td><td>OT_FUNCTION</td><td>Function for calculating the gradient of the objective and Jacobian of the constraints (autogenerated by default)</td></tr>
@@ -4169,7 +4280,7 @@
 <tr><td>calc_lam_x</td><td>OT_BOOL</td><td>Calculate 'lam_x' in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>calc_multipliers</td><td>OT_BOOL</td><td>Calculate Lagrange multipliers in the Nlpsol base class</td><td>casadi::Nlpsol</td></tr>
 <tr><td>convexify_margin</td><td>OT_DOUBLE</td><td>When using a convexification strategy, make sure that the smallest eigenvalue is at least this (default: 1e-7).</td><td>casadi::Sqpmethod</td></tr>
-<tr><td>convexify_strategy</td><td>OT_STRING</td><td>none|regularize|eigen-reflect|eigen-clip. Default: none.</td><td>casadi::Sqpmethod</td></tr>
+<tr><td>convexify_strategy</td><td>OT_STRING</td><td>NONE|regularize|eigen-reflect|eigen-clip. Strategy to convexify the Lagrange Hessian before passing it to the solver.</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>discrete</td><td>OT_BOOLVECTOR</td><td>Indicates which of the variables are discrete, i.e. integer-valued</td><td>casadi::Nlpsol</td></tr>
 <tr><td>error_on_fail</td><td>OT_BOOL</td><td>When the numerical process returns unsuccessfully, raise an error (default false).</td><td>casadi::Nlpsol</td></tr>
 <tr><td>eval_errors_fatal</td><td>OT_BOOL</td><td>When errors occur during evaluation of f,g,...,stop the iterations</td><td>casadi::Nlpsol</td></tr>
@@ -4195,6 +4306,8 @@
 <tr><td>print_status</td><td>OT_BOOL</td><td>Print a status message after solving</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>qpsol</td><td>OT_STRING</td><td>The QP solver to be used by the SQP method [qpoases]</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>qpsol_options</td><td>OT_DICT</td><td>Options to be passed to the QP solver</td><td>casadi::Sqpmethod</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>tol_du</td><td>OT_DOUBLE</td><td>Stopping criterion for dual infeasability</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>tol_pr</td><td>OT_DOUBLE</td><td>Stopping criterion for primal infeasibility</td><td>casadi::Sqpmethod</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
@@ -4221,6 +4334,7 @@
 <tr><td>max_multistep_order</td><td>OT_INT</td><td>Maximum order for the (variable-order) multistep method</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_num_steps</td><td>OT_INT</td><td>Maximum number of integrator steps</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_order</td><td>OT_DOUBLE</td><td>Maximum order</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>max_step_size</td><td>OT_DOUBLE</td><td>Max step size [default: 0/inf]</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>newton_scheme</td><td>OT_STRING</td><td>Linear solver scheme in the Newton method: DIRECT|gmres|bcgstab|tfqmr</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlin_conv_coeff</td><td>OT_DOUBLE</td><td>Coefficient in the nonlinear convergence test</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>number_of_finite_elements</td><td>OT_INT</td><td>Number of finite elements</td><td>casadi::Integrator</td></tr>
@@ -4262,6 +4376,7 @@
 <tr><td>max_multistep_order</td><td>OT_INT</td><td>Maximum order for the (variable-order) multistep method</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_num_steps</td><td>OT_INT</td><td>Maximum number of integrator steps</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>max_order</td><td>OT_DOUBLE</td><td>Maximum order</td><td>casadi::SundialsInterface</td></tr>
+<tr><td>max_step_size</td><td>OT_DOUBLE</td><td>Max step size [default: 0/inf]</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>newton_scheme</td><td>OT_STRING</td><td>Linear solver scheme in the Newton method: DIRECT|gmres|bcgstab|tfqmr</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>nonlin_conv_coeff</td><td>OT_DOUBLE</td><td>Coefficient in the nonlinear convergence test</td><td>casadi::SundialsInterface</td></tr>
 <tr><td>number_of_finite_elements</td><td>OT_INT</td><td>Number of finite elements</td><td>casadi::Integrator</td></tr>
@@ -4354,6 +4469,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -4413,6 +4529,7 @@
 <tr><td>jit_cleanup</td><td>OT_BOOL</td><td>Cleanup up the temporary source file that jit creates. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_name</td><td>OT_STRING</td><td>The file name used to write out code. The actual file names used depend on 'jit_temp_suffix' and include extensions. Default: 'jit_tmp'</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_options</td><td>OT_DICT</td><td>Options to be passed to the jit compiler.</td><td>casadi::FunctionInternal</td></tr>
+<tr><td>jit_serialize</td><td>OT_STRING</td><td>Specify behaviour when serializing a jitted function: SOURCE|link|embed.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>jit_temp_suffix</td><td>OT_BOOL</td><td>Use a temporary (seemingly random) filename suffix for generated code and libraries. This is desired for thread-safety. This behaviour may defeat caching compiler wrappers. Default: true</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>max_num_dir</td><td>OT_INT</td><td>Specify the maximum number of directions for derivative functions. Overrules the builtin optimized_num_dir.</td><td>casadi::FunctionInternal</td></tr>
 <tr><td>never_inline</td><td>OT_BOOL</td><td>Forbid inlining.</td><td>casadi::FunctionInternal</td></tr>
@@ -4450,6 +4567,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
 <tr><td>worhp</td><td>OT_DICT</td><td>Options to be passed to WORHP</td><td>casadi::WorhpInterface</td></tr>
@@ -4487,6 +4606,8 @@
 <tr><td>min_lam</td><td>OT_DOUBLE</td><td>Minimum allowed multiplier value</td><td>casadi::Nlpsol</td></tr>
 <tr><td>no_nlp_grad</td><td>OT_BOOL</td><td>Prevent the creation of the 'nlp_grad' function</td><td>casadi::Nlpsol</td></tr>
 <tr><td>oracle_options</td><td>OT_DICT</td><td>Options to be passed to the oracle function</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol</td><td>OT_STRING</td><td>Linear solver used for parametric sensitivities (default 'qr').</td><td>casadi::Nlpsol</td></tr>
+<tr><td>sens_linsol_options</td><td>OT_DICT</td><td>Linear solver options used for parametric sensitivities.</td><td>casadi::Nlpsol</td></tr>
 <tr><td>verbose_init</td><td>OT_BOOL</td><td>Print out timing information about the different stages of initialization</td><td>casadi::Nlpsol</td></tr>
 <tr><td>warn_initial_bounds</td><td>OT_BOOL</td><td>Warn if the initial guess does not satisfy LBX and UBX</td><td>casadi::Nlpsol</td></tr>
 <tr><td>worhp</td><td>OT_DICT</td><td>Options to be passed to WORHP</td><td>casadi::WorhpInterface</td></tr>

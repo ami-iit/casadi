@@ -42,6 +42,20 @@ namespace casadi {
   class SerializingStream;
   class DeserializingStream;
 
+#ifndef SWIG
+  struct ConvexifyData {
+    std::vector<casadi_int> scc_offset, scc_mapping;
+    Sparsity scc_sp;
+    Sparsity Hrsp;
+    Sparsity Hsp;
+    casadi_convexify_config<double> config;
+    casadi_int sz_iw;
+    casadi_int sz_w;
+    casadi_int *iw;
+    double* w;
+  };
+#endif
+
   /** \brief MX - Matrix expression
 
       The MX class is used to build up trees made up from MXNodes. It is a more general
@@ -547,6 +561,7 @@ namespace casadi {
             const std::vector<casadi_int>& degree,
             casadi_int m,
             const Dict& opts = Dict());
+    static MX convexify(const MX& H, const Dict& opts = Dict());
     ///@}
     /// \endcond
 
@@ -654,6 +669,11 @@ namespace casadi {
             const std::vector<casadi_int>& degree,
             const Dict& opts = Dict()) {
       return MX::bspline_dual(x, knots, degree, opts);
+    }
+
+    inline friend MX convexify(const MX& H,
+            const Dict& opts = Dict()) {
+      return MX::convexify(H, opts);
     }
 
     /** \brief Lift the expression

@@ -44,6 +44,9 @@ namespace casadi {
 
     DeserializingStream::DeserializingStream(std::istream& in_s) : in(in_s), debug_(false) {
 
+      casadi_assert(in_s.good(), "Invalid input stream. If you specified an input file, "
+        "make sure it exists relative to the current directory.");
+
       // Sanity check
       casadi_int check;
       unpack(check);
@@ -268,6 +271,34 @@ namespace casadi {
       shared_unpack<GenericType, SharedObjectInternal>(e);
     }
 
+    void SerializingStream::pack(std::istream& s) {
+      decorate('B');
+      s.seekg(0, std::ios::end);
+      size_t len = s.tellg();
+      s.seekg(0, std::ios::beg);
+      pack(len);
+      char buffer[1024];
+      for (size_t i=0;i<len;++i) {
+        s.read(buffer, 1024);
+        size_t c = s.gcount();
+        for (size_t j=0;j<c;++j) {
+          pack(buffer[j]);
+        }
+        if (s.rdstate() & std::ifstream::eofbit) break;
+      }
+    }
+
+    void DeserializingStream::unpack(std::ostream& s) {
+      assert_decoration('B');
+      size_t len;
+      unpack(len);
+      for (size_t i=0;i<len;++i) {
+        char c;
+        unpack(c);
+        s.put(c);
+      }
+    }
+
     void SerializingStream::pack(const Slice& e) {
       decorate('S');
       e.serialize(*this);
@@ -301,9 +332,23 @@ namespace casadi {
     }
   }
 
-  void DeserializingStream::version(const std::string& name, int v) {
+  int DeserializingStream::version(const std::string& name) {
     int load_version;
     unpack(name+"::serialization::version", load_version);
+    return load_version;
+  }
+
+  int DeserializingStream::version(const std::string& name, int min, int max) {
+    int load_version = version(name);
+    casadi_assert(load_version>=min && load_version<=max,
+      "DeSerialization of " + name + " failed. "
+      "Object written in version " + str(load_version) +
+      " but can only read version " + str(min) + "..." + str(max) + ".");
+    return load_version;
+  }
+
+  void DeserializingStream::version(const std::string& name, int v) {
+    int load_version = version(name);
     casadi_assert(load_version==v,
       "DeSerialization of " + name + " failed. "
       "Object written in version " + str(load_version) +
@@ -346,6 +391,22 @@ namespace casadi {
         delete static_cast<SharedObjectInternal*>(node);
       }
     }
+  }
+
+  void SerializingStream::connect(DeserializingStream & s) {
+    nodes_ = &s.nodes_;
+  }
+
+  void DeserializingStream::connect(SerializingStream & s) {
+    shared_map_ = &s.shared_map_;
+  }
+
+  void SerializingStream::reset() {
+    shared_map_.clear();
+  }
+
+  void DeserializingStream::reset() {
+    nodes_.clear();
   }
 
 } // namespace casadi

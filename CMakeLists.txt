@@ -3,7 +3,7 @@ project(casadi C CXX)
 
 set(CASADI_MAJOR_VERSION 3)
 set(CASADI_MINOR_VERSION 5)
-set(CASADI_PATCH_VERSION 1)
+set(CASADI_PATCH_VERSION 5)
 set(CASADI_IS_RELEASE 1)
 
 set(CASADI_VERSION ${CASADI_MAJOR_VERSION}.${CASADI_MINOR_VERSION}.${CASADI_PATCH_VERSION})
@@ -435,7 +435,7 @@ endif()
 #######################################################################
 # the following commands are needed to fix a problem with the libraries
 # for linux 64 bits
-if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
   message(STATUS "x86_64 architecture detected - setting flag -fPIC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
@@ -809,6 +809,19 @@ include(embed_resources)
 include(GenerateExportHeader)
 
 #####################################################
+################# gathering info for config.h #######
+#####################################################
+
+feature_summary(WHAT ENABLED_FEATURES VAR feature_list)
+string(REPLACE "\n" "\\n" feature_list "${feature_list}")
+
+get_directory_property( compiler_definitions COMPILE_DEFINITIONS )
+set(EXTRA_CXX_FLAGS_FROM_DEFS "")
+foreach(DEF ${compiler_definitions})
+  set(EXTRA_CXX_FLAGS_FROM_DEFS "${EXTRA_CXX_FLAGS_FROM_DEFS} -D${DEF}")
+endforeach()
+
+#####################################################
 ################# include the rest ##################
 #####################################################
 add_subdirectory(external_packages)
@@ -835,18 +848,8 @@ if(WITH_DOC)
   add_custom_target(tutor)
 endif()
 
-
-
 # Print a summary
 feature_summary(WHAT ALL)
-feature_summary(WHAT ENABLED_FEATURES VAR feature_list)
-
-string(REPLACE "\n" "\\n" feature_list "${feature_list}")
-get_directory_property( compiler_definitions COMPILE_DEFINITIONS )
-set(EXTRA_CXX_FLAGS_FROM_DEFS "")
-foreach(DEF ${compiler_definitions})
-  set(EXTRA_CXX_FLAGS_FROM_DEFS "${EXTRA_CXX_FLAGS_FROM_DEFS} -D${DEF}")
-endforeach()
 
 # what is this?
 if(EXTRA_CMAKE)

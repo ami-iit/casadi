@@ -1746,6 +1746,12 @@ namespace casadi {
     const casadi_int* z_colind = z_sp.colind();
     const casadi_int* z_row = z_sp.row();
 
+    // Clear residual work vector data from preceding operations (not necessary
+    // for data from this method if conditional clear code is made unconditional
+    // in loop)
+    casadi_int nrow = z_sp.size1();
+    casadi_fill(w, nrow, static_cast<bvec_t>(0));
+
     // Loop over the columns of y and z
     casadi_int ncol = z_sp.size2();
     for (casadi_int cc=0; cc<ncol; ++cc) {
@@ -1767,9 +1773,10 @@ namespace casadi {
         y[kk] |= yy;
       }
 
-      // Get the sparse column of z
+      // Get the sparse column of z, clear work vector for next column
       for (casadi_int kk=z_colind[cc]; kk<z_colind[cc+1]; ++kk) {
         z[kk] = w[z_row[kk]];
+        w[z_row[kk]] = 0;
       }
     }
   }

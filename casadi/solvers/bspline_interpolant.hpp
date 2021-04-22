@@ -77,6 +77,9 @@ namespace casadi {
       return new BSplineInterpolant(name, grid, offset, values, m);
     }
 
+    // Is differentiable? Deferred to bspline
+    bool is_diff_in(casadi_int i) override { return true; }
+
     // Initialize
     void init(const Dict& opts) override;
 
@@ -90,6 +93,33 @@ namespace casadi {
                                       const std::vector<std::string>& inames,
                                       const std::vector<std::string>& onames,
                                       const Dict& opts) const override;
+    ///@}
+
+
+    ///@{
+    /** \brief Return function that calculates forward derivatives
+     *    forward(nfwd) returns a cached instance if available,
+     *    and calls <tt>Function get_forward(casadi_int nfwd)</tt>
+     *    if no cached version is available.
+     */
+    bool has_forward(casadi_int nfwd) const override { return true; }
+    Function get_forward(casadi_int nfwd, const std::string& name,
+                                 const std::vector<std::string>& inames,
+                                 const std::vector<std::string>& onames,
+                                 const Dict& opts) const override;
+    ///@}
+
+    ///@{
+    /** \brief Return function that calculates adjoint derivatives
+     *    reverse(nadj) returns a cached instance if available,
+     *    and calls <tt>Function get_reverse(casadi_int nadj)</tt>
+     *    if no cached version is available.
+     */
+    bool has_reverse(casadi_int nadj) const override { return true; }
+    Function get_reverse(casadi_int nadj, const std::string& name,
+                                 const std::vector<std::string>& inames,
+                                 const std::vector<std::string>& onames,
+                                 const Dict& opts) const override;
     ///@}
 
     /** \brief Is codegen supported? */
@@ -113,6 +143,18 @@ namespace casadi {
     // Spline Function
     Function S_;
 
+    /** \brief  Propagate sparsity forward */
+    int sp_forward(const bvec_t** arg, bvec_t** res,
+                    casadi_int* iw, bvec_t* w, void* mem) const override {
+      return S_->sp_forward(arg, res, iw, w, mem);
+    }
+
+    /** \brief  Propagate sparsity backwards */
+    int sp_reverse(bvec_t** arg, bvec_t** res,
+        casadi_int* iw, bvec_t* w, void* mem) const override {
+      return S_->sp_reverse(arg, res, iw, w, mem);
+    }
+
     static std::vector<double> greville_points(const std::vector<double>& x, casadi_int deg);
 
     void serialize_body(SerializingStream &s) const override;
@@ -127,7 +169,7 @@ namespace casadi {
     static std::vector<double> not_a_knot(const std::vector<double>& x, casadi_int k);
 
     template <typename M>
-    MX construct_graph(const MX& x, const M& values, const Dict& opts);
+    MX construct_graph(const MX& x, const M& values, const Dict& linsol_options, const Dict& opts);
 
     enum FittingAlgorithm {ALG_NOT_A_KNOT, ALG_SMOOTH_LINEAR};
 
@@ -140,7 +182,8 @@ namespace casadi {
 
 
   template <typename M>
-  MX BSplineInterpolant::construct_graph(const MX& x, const M& values, const Dict& opts) {
+  MX BSplineInterpolant::construct_graph(const MX& x, const M& values,
+      const Dict& linsol_options, const Dict& opts) {
 
     std::vector< std::vector<double> > grid;
     for (casadi_int k=0;k<degree_.size();++k) {
@@ -148,8 +191,16 @@ namespace casadi {
       grid.push_back(local_grid);
     }
 
+    bool do_inline = false;
+    for (auto&& op : opts) {
+      if (op.first=="inline") {
+        do_inline = op.second;
+      }
+    }
+
     Dict opts_bspline;
     opts_bspline["lookup_mode"] = lookup_modes_;
+    opts_bspline["inline"] = do_inline;
 
     switch (algorithm_) {
       case ALG_NOT_A_KNOT:
@@ -165,7 +216,7 @@ namespace casadi {
           casadi_assert_dev(J.size1()==J.size2());
 
           M V = M::reshape(values, m_, -1).T();
-          M C_opt = solve(J, V, linear_solver_);
+          M C_opt = solve(J, V, linear_solver_, linsol_options);
 
           if (!has_parametric_values()) {
             double fit = static_cast<double>(norm_1(mtimes(J, C_opt) - V));

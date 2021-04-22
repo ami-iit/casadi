@@ -27,6 +27,7 @@
 #define CASADI_CODE_GENERATOR_HPP
 
 #include "function.hpp"
+
 #include <map>
 #include <set>
 #include <sstream>
@@ -298,6 +299,10 @@ namespace casadi {
     /** \brief regularize */
     std::string regularize(const Sparsity& sp_h, const std::string& h, const std::string& reg);
 
+    /** \brief convexify */
+    std::string convexify_eval(const ConvexifyData& d,
+      const std::string& Hin, const std::string& Hout, const std::string& iw, const std::string& w);
+
     /** \brief low */
     std::string low(const std::string& x, const std::string& grid,
       casadi_int ng, casadi_int lookup_mode);
@@ -312,6 +317,7 @@ namespace casadi {
     enum Auxiliary {
       AUX_COPY,
       AUX_CVX,
+      AUX_CONVEXIFY,
       AUX_SWAP,
       AUX_SCAL,
       AUX_AXPY,
@@ -372,7 +378,8 @@ namespace casadi {
       AUX_ISINF,
       AUX_BOUNDS_CONSISTENCY,
       AUX_LSQR,
-      AUX_FILE_SLURP
+      AUX_FILE_SLURP,
+      AUX_CACHE
     };
 
     /** \brief Add a built-in auxiliary function */
@@ -462,6 +469,11 @@ namespace casadi {
 
     /** \brief Slurp a file */
     std::string file_slurp(const std::string& fname, casadi_int n, const std::string& a);
+
+    /** \brief cache check */
+    std::string cache_check(const std::string& key, const std::string& cache,
+        const std::string& loc, casadi_int stride, casadi_int sz, casadi_int key_sz,
+        const std::string& val);
   private:
 
     /// Print file header

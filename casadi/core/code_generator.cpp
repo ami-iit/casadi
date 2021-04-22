@@ -26,6 +26,7 @@
 
 #include "code_generator.hpp"
 #include "function_internal.hpp"
+#include "convexify.hpp"
 #include <casadi_runtime_str.h>
 #include <iomanip>
 
@@ -307,7 +308,7 @@ namespace casadi {
     // Generate Jacobian sparsity information
     if (with_jac_sparsity) {
       // Generate/get Jacobian sparsity
-      Sparsity jac = f->get_jacobian_sparsity();
+      Sparsity jac = f->jacobian_sparsity();
       // Code generate the sparsity pattern
       add_io_sparsities("jac_" + f.name(), f->sparsity_in_, {jac});
 
@@ -463,14 +464,20 @@ namespace casadi {
     s << "  char buf[" << (buf_len+1) << "];\n";
 
     // Read string argument
-    s << "  int buf_ok = --argc >= 0 && !mxGetString(*argv++, buf, sizeof(buf));\n";
+    s << "  int buf_ok = argc > 0 && !mxGetString(*argv, buf, sizeof(buf));\n";
 
     // Create switch
-    s << "  if (!buf_ok) {\n"
-      << "    /* name error */\n";
+    s << "  if (!buf_ok) {\n";
+    // Allow stringless call when unambiguous
+    if (exposed_fname.size()==1) {
+      s << "    mex_" << exposed_fname[0] << "(resc, resv, argc, argv);\n"
+        << "    return;\n";
+    } else {
+      s << "    /* name error */\n";
+    }
     for (casadi_int i=0; i<exposed_fname.size(); ++i) {
       s << "  } else if (strcmp(buf, \"" << exposed_fname[i] << "\")==0) {\n"
-        << "    mex_" << exposed_fname[i] << "(resc, resv, argc, argv);\n"
+        << "    mex_" << exposed_fname[i] << "(resc, resv, argc-1, argv+1);\n"
         << "    return;\n";
     }
     s << "  }\n";
@@ -1097,13 +1104,24 @@ namespace casadi {
       add_include("stdio.h");
       this->auxiliaries << sanitize_source(casadi_file_slurp_str, inst);
       break;
+    case AUX_CACHE:
+      this->auxiliaries << sanitize_source(casadi_cache_str, inst);
+      break;
     case AUX_CVX:
       add_auxiliary(AUX_CLEAR);
       add_auxiliary(AUX_FABS);
       add_auxiliary(AUX_COPY);
       add_auxiliary(AUX_DOT);
       add_auxiliary(AUX_AXPY);
+      add_auxiliary(AUX_FMAX);
       this->auxiliaries << sanitize_source(casadi_cvx_str, inst);
+      break;
+    case AUX_CONVEXIFY:
+      add_auxiliary(AUX_CVX);
+      add_auxiliary(AUX_PROJECT);
+      add_auxiliary(AUX_REGULARIZE);
+      add_auxiliary(AUX_COPY);
+      this->auxiliaries << sanitize_source(casadi_convexify_str, inst);
       break;
     case AUX_TO_DOUBLE:
       this->auxiliaries << "#define casadi_to_double(x) "
@@ -1876,6 +1894,13 @@ namespace casadi {
   }
 
   std::string CodeGenerator::
+  convexify_eval(const ConvexifyData &d,
+    const std::string& Hin, const std::string& Hout, const std::string& iw, const std::string& w) {
+      add_auxiliary(CodeGenerator::AUX_CONVEXIFY);
+      return Convexify::generate(*this, d, Hin, Hout, iw, w);
+  }
+
+  std::string CodeGenerator::
   low(const std::string& x, const std::string& grid, casadi_int ng, casadi_int lookup_mode) {
     add_auxiliary(CodeGenerator::AUX_LOW);
     return "casadi_low(" + x + ", " + grid + ", " + str(ng) + ", " + str(lookup_mode) + ");";
@@ -1893,6 +1918,14 @@ namespace casadi {
   file_slurp(const std::string& fname, casadi_int n, const std::string& a) {
     add_auxiliary(CodeGenerator::AUX_FILE_SLURP);
     return "casadi_file_slurp(\"" + fname + "\", " + str(n) + ", " + a + ")";
+  }
+
+  std::string CodeGenerator::
+  cache_check(const std::string& key, const std::string& cache, const std::string& loc,
+        casadi_int stride, casadi_int sz, casadi_int key_sz, const std::string& val) {
+    add_auxiliary(CodeGenerator::AUX_CACHE);
+    return "cache_check(" + key + ", " + cache + ", " + loc + ", " +
+    str(stride) + ", " + str(sz) + ", " + str(key_sz) + ", " + val + ")";
   }
 
 } // namespace casadi

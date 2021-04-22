@@ -460,7 +460,7 @@ class Matrixtests(casadiTestCase):
         self.checkarray(c==A,m([[0,0],[0,0]]),"==")
         self.checkarray(c!=A,m([[1,1],[1,1]]),"!=")
 
-    for c in [5,5.0,DM([5]),np.array([5]),matrix(5)]:
+    for c in [5,5.0,DM([5]),np.array([5])]+([matrix(5)] if check_matrix else []):
       self.checkarray(A<=c,m([[1,1],[1,1]]),"<=")
       self.checkarray(A<c,m([[0,1],[1,1]]),"<")
       self.checkarray(A>c,m([[0,0],[0,0]]),">")
@@ -1109,6 +1109,7 @@ class Matrixtests(casadiTestCase):
     P = DM.eye(10)[:,p]
 
     F = mtimes(mtimes(sqrt(diag(D)),DM.eye(10)+Lt),P.T)
+    print(H-mtimes(F.T,F))
     self.assertTrue(norm_fro(H-mtimes(F.T,F))<=1e-14)
 
 

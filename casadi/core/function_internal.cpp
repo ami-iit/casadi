@@ -83,6 +83,7 @@ namespace casadi {
     inputs_check_ = true;
     jit_ = false;
     jit_cleanup_ = true;
+    jit_serialize_ = "source";
     jit_base_name_ = "jit_tmp";
     jit_temp_suffix_ = true;
     compiler_plugin_ = "clang";
@@ -226,6 +227,9 @@ namespace casadi {
       {"jit_cleanup",
        {OT_BOOL,
         "Cleanup up the temporary source file that jit creates. Default: true"}},
+      {"jit_serialize",
+       {OT_STRING,
+        "Specify behaviour when serializing a jitted function: SOURCE|link|embed."}},
       {"jit_name",
        {OT_STRING,
         "The file name used to write out code. "
@@ -344,9 +348,10 @@ namespace casadi {
     opts["inputs_check"] = inputs_check_;
     if (!is_temp) opts["jit"] = jit_;
     opts["jit_cleanup"] = jit_cleanup_;
+    opts["jit_serialize"] = jit_serialize_;
     opts["compiler"] = compiler_plugin_;
     opts["jit_options"] = jit_options_;
-    opts["jit_name"] = jit_name_;
+    opts["jit_name"] = jit_base_name_;
     opts["jit_temp_suffix"] = jit_temp_suffix_;
     opts["derivative_of"] = derivative_of_;
     opts["ad_weight"] = ad_weight_;
@@ -401,6 +406,10 @@ namespace casadi {
         jit_ = op.second;
       } else if (op.first=="jit_cleanup") {
         jit_cleanup_ = op.second;
+      } else if (op.first=="jit_serialize") {
+        jit_serialize_ = op.second.to_string();
+        casadi_assert(jit_serialize_=="source" || jit_serialize_=="link" || jit_serialize_=="embed",
+          "jit_serialize option not understood. Pick one of source, link, embed.");
       } else if (op.first=="compiler") {
         compiler_plugin_ = op.second.to_string();
       } else if (op.first=="jit_options") {
@@ -556,16 +565,18 @@ namespace casadi {
         jit_name_ = std::string(jit_name_.begin(), jit_name_.begin()+jit_name_.size()-2);
       }
       if (has_codegen()) {
-        if (verbose_) casadi_message("Codegenerating function '" + name_ + "'.");
-        // JIT everything
-        Dict opts;
-        // Override the default to avoid random strings in the generated code
-        opts["prefix"] = "jit";
-        CodeGenerator gen(jit_name_, opts);
-        gen.add(self());
-        if (verbose_) casadi_message("Compiling function '" + name_ + "'..");
-        compiler_ = Importer(gen.generate(), compiler_plugin_, jit_options_);
-        if (verbose_) casadi_message("Compiling function '" + name_ + "' done.");
+        if (compiler_.is_null()) {
+          if (verbose_) casadi_message("Codegenerating function '" + name_ + "'.");
+          // JIT everything
+          Dict opts;
+          // Override the default to avoid random strings in the generated code
+          opts["prefix"] = "jit";
+          CodeGenerator gen(jit_name_, opts);
+          gen.add(self());
+          if (verbose_) casadi_message("Compiling function '" + name_ + "'..");
+          compiler_ = Importer(gen.generate(), compiler_plugin_, jit_options_);
+          if (verbose_) casadi_message("Compiling function '" + name_ + "' done.");
+        }
         // Try to load
         eval_ = (eval_t) compiler_.get_function(name_);
         checkout_ = (casadi_checkout_t) compiler_.get_function(name_ + "checkout");
@@ -1921,6 +1932,18 @@ namespace casadi {
     return f;
   }
 
+  Sparsity FunctionInternal::jacobian_sparsity() const {
+    if (!jacobian_sparsity_.is_null()) {
+      return jacobian_sparsity_;
+    }
+    if (has_jacobian_sparsity()) {
+      jacobian_sparsity_ = get_jacobian_sparsity();
+      return jacobian_sparsity_;
+    } else {
+      return wrap()->jacobian_sparsity();
+    }
+  }
+
   Function FunctionInternal::
   get_forward(casadi_int nfwd, const std::string& name,
               const std::vector<std::string>& inames,
@@ -2094,10 +2117,6 @@ namespace casadi {
     casadi_error("'get_jac' not defined for " + class_name());
   }
 
-  Sparsity FunctionInternal::get_jacobian_sparsity() const {
-    return wrap()->get_jacobian_sparsity();
-  }
-
   void FunctionInternal::codegen(CodeGenerator& g, const std::string& fname) const {
     // Define function
     g << "/* " << definition() << " */\n";
@@ -2254,7 +2273,7 @@ namespace casadi {
       // Declare wrapper
       g << "void mex_" << name_
         << "(int resc, mxArray *resv[], int argc, const mxArray *argv[]) {\n"
-        << "casadi_int i, j;\n";
+        << "casadi_int i;\n";
 
       // Work vectors, including input and output buffers
       casadi_int i_nnz = nnz_in(), o_nnz = nnz_out();
@@ -2325,42 +2344,45 @@ namespace casadi {
       // Declare wrapper
       g << "casadi_int main_" << name_ << "(casadi_int argc, char* argv[]) {\n";
 
+      g << "casadi_int j;\n";
+      g << "casadi_real* a;\n";
+      g << "const casadi_real* r;\n";
+      g << "casadi_int flag;\n";
+
+
+
       // Work vectors and input and output buffers
       size_t nr = sz_w() + nnz_in() + nnz_out();
       g << CodeGenerator::array("casadi_int", "iw", sz_iw())
         << CodeGenerator::array("casadi_real", "w", nr);
 
       // Input buffers
-      g << "const casadi_real* arg[" << sz_arg() << "] = {";
-      casadi_int off=0;
-      for (casadi_int i=0; i<n_in_; ++i) {
-        if (i!=0) g << ", ";
-        g << "w+" << off;
-        off += nnz_in(i);
-      }
-      g << "};\n";
+      g << "const casadi_real* arg[" << sz_arg() << "];\n";
 
       // Output buffers
-      g << "casadi_real* res[" << sz_res() << "] = {";
+      g << "casadi_real* res[" << sz_res() << "];\n";
+
+      casadi_int off=0;
+      for (casadi_int i=0; i<n_in_; ++i) {
+        g << "arg[" << i << "] = w+" << off << ";\n";
+        off += nnz_in(i);
+      }
       for (casadi_int i=0; i<n_out_; ++i) {
-        if (i!=0) g << ", ";
-        g << "w+" << off;
+        g << "res[" << i << "] = w+" << off << ";\n";
         off += nnz_out(i);
       }
-      g << "};\n";
 
       // TODO(@jaeandersson): Read inputs from file. For now; read from stdin
-      g << "casadi_int j;\n"
-        << "casadi_real* a = w;\n"
+      g << "a = w;\n"
         << "for (j=0; j<" << nnz_in() << "; ++j) "
-        << "scanf(\"%lg\", a++);\n";
+        << "if (scanf(\"%lg\", a++)<=0) return 2;\n";
 
       // Call the function
-      g << "casadi_int flag = " << name_ << "(arg, res, iw, w+" << off << ", 0);\n"
+      g << "flag = " << name_ << "(arg, res, iw, w+" << off << ", 0);\n"
         << "if (flag) return flag;\n";
 
       // TODO(@jaeandersson): Write outputs to file. For now: print to stdout
-      g << "const casadi_real* r = w+" << nnz_in() << ";\n"
+      g << "r = w+" << nnz_in() << ";\n"
         << "for (j=0; j<" << nnz_out() << "; ++j) "
         << g.printf("%g ", "*r++") << "\n";
 
@@ -2381,9 +2403,9 @@ namespace casadi {
         << name_ << "_checkout,\n"
         << name_ << "_release,\n"
         << name_ << "_default_in,\n"
-        << name_ << "_alloc_mem,\n"
-        << name_ << "_init_mem,\n"
-        << name_ << "_free_mem,\n"
+        //<< name_ << "_alloc_mem,\n"
+        //<< name_ << "_init_mem,\n"
+        //<< name_ << "_free_mem,\n"
         << name_ << "_n_in,\n"
         << name_ << "_n_out,\n"
         << name_ << "_name_in,\n"
@@ -3519,7 +3541,7 @@ namespace casadi {
 
   void FunctionInternal::serialize_body(SerializingStream& s) const {
     ProtoFunction::serialize_body(s);
-    s.version("FunctionInternal", 1);
+    s.version("FunctionInternal", 2);
     s.pack("FunctionInternal::is_diff_in", is_diff_in_);
     s.pack("FunctionInternal::is_diff_out", is_diff_out_);
     s.pack("FunctionInternal::sp_in", sparsity_in_);
@@ -3529,6 +3551,15 @@ namespace casadi {
 
     s.pack("FunctionInternal::jit", jit_);
     s.pack("FunctionInternal::jit_cleanup", jit_cleanup_);
+    s.pack("FunctionInternal::jit_serialize", jit_serialize_);
+    if (jit_serialize_=="link" || jit_serialize_=="embed") {
+      s.pack("FunctionInternal::jit_library", compiler_.library());
+      if (jit_serialize_=="embed") {
+        std::ifstream binary(compiler_.library(), ios_base::binary);
+        casadi_assert(binary.good(), "Could not open library '" + compiler_.library() + "'.");
+        s.pack("FunctionInternal::jit_binary", binary);
+      }
+    }
     s.pack("FunctionInternal::jit_temp_suffix", jit_temp_suffix_);
     s.pack("FunctionInternal::jit_base_name", jit_base_name_);
     s.pack("FunctionInternal::jit_options", jit_options_);
@@ -3583,7 +3614,7 @@ namespace casadi {
   }
 
   FunctionInternal::FunctionInternal(DeserializingStream& s) : ProtoFunction(s) {
-    s.version("FunctionInternal", 1);
+    int version = s.version("FunctionInternal", 1, 2);
     s.unpack("FunctionInternal::is_diff_in", is_diff_in_);
     s.unpack("FunctionInternal::is_diff_out", is_diff_out_);
     s.unpack("FunctionInternal::sp_in", sparsity_in_);
@@ -3593,6 +3624,28 @@ namespace casadi {
 
     s.unpack("FunctionInternal::jit", jit_);
     s.unpack("FunctionInternal::jit_cleanup", jit_cleanup_);
+    if (version==1) {
+      jit_serialize_ = "source";
+    } else {
+      s.unpack("FunctionInternal::jit_serialize", jit_serialize_);
+    }
+    if (jit_serialize_=="link" || jit_serialize_=="embed") {
+      std::string library;
+      s.unpack("FunctionInternal::jit_library", library);
+      if (jit_serialize_=="embed") {
+        // If file already exist
+        std::ifstream binary(library, ios_base::binary);
+        if (binary.good()) { // library exists
+          // Ignore packed contents
+          std::stringstream ss;
+          s.unpack("FunctionInternal::jit_binary", ss);
+        } else { // library does not exist
+          std::ofstream binary(library, ios_base::binary | std::ios_base::out);
+          s.unpack("FunctionInternal::jit_binary", binary);
+        }
+      }
+      compiler_ = Importer(library, "dll");
+    }
     s.unpack("FunctionInternal::jit_temp_suffix", jit_temp_suffix_);
     s.unpack("FunctionInternal::jit_base_name", jit_base_name_);
     s.unpack("FunctionInternal::jit_options", jit_options_);

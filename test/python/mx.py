@@ -1599,11 +1599,20 @@ class MXtests(casadiTestCase):
     c = MX(0,0)
     x = MX.sym("x",2,3)
 
-    with self.assertRaises(RuntimeError):
-      d = x + c
+    # https://github.com/casadi/casadi/issues/2628
+    if swig4:
+      with self.assertRaises(TypeError):
+        d = x + c
+    else:
+      with self.assertRaises(RuntimeError):
+        d = x + c
 
-    with self.assertRaises(RuntimeError):
-      d = x / c
+    if swig4:
+      with self.assertRaises(TypeError):
+        d = x / c
+    else:
+      with self.assertRaises(RuntimeError):
+        d = x / c
 
   @slow()
   @memory_heavy()
@@ -2499,8 +2508,9 @@ class MXtests(casadiTestCase):
         else:
           self.assertTrue(c.nnz()>0)
 
-  @requiresPlugin(Linsol,"lapackqr")
+  @requires_linsol("lapackqr")
   def test_solve(self):
+    print(123)
     N = 3
     nrhs = 50
     np.random.seed(0)
@@ -2613,7 +2623,7 @@ class MXtests(casadiTestCase):
     with capture_stdout() as out2:
       self.check_codegen(f,inputs=[3])
     if args.run_slow:
-      self.assertTrue(out2[0]=="hey:\n[3]\n")
+      self.assertTrue("hey:\n[3]\n" in out2[0])
 
   def test_codegen_specials(self):
     x = MX.sym("x")
@@ -2894,6 +2904,40 @@ class MXtests(casadiTestCase):
     A = MX.sym("A",4,4)
     i = DM([[0,3],[1,2]])
     self.checkarray(i,A[i].mapping())
+
+
+  def test_convexify(self):
+    A = diagcat(1,2,-1,blockcat([[1.2,1.3],[1.3,4]]),sparsify(blockcat([[0,1,0],[1,4,7],[0,7,9]])),DM(2,2))
+
+    margin = 1e-7
+
+    np.random.seed(0)
+    p = np.random.permutation(A.shape[0])
+
+
+    [D,V] = np.linalg.eig(np.array(A))
+    Dr= fmax(abs(D),1e-7)
+    Dc= fmax(D,1e-7)
+
+    Ar_ref = mtimes(mtimes(V,diag(Dr)),V.T)
+    Ac_ref = mtimes(mtimes(V,diag(Dc)),V.T)
+    As = MX.sym("As",A.sparsity())
+
+    for opts,ref in [({"strategy":"eigen-reflect"},Ar_ref), ({"strategy":"eigen-clip"},Ac_ref), ({"strategy":"regularize"},A+(4+margin)*DM.eye(A.shape[0]))]:
+
+
+      ops = [lambda e: e, lambda e: triu(e), lambda e: tril(e),
+                 lambda e: e[p,p], lambda e: triu(e[p,p]), lambda e: tril(e[p,p])]
+      if "regularize" in str(opts): ops = [lambda e: e, lambda e: e[p,p]]
+      for op in ops:
+
+        f= Function("f",[As],[convexify(op(A),opts)])
+
+        self.checkarray(f(A),op(ref),digits=8)
+
+        self.check_serialize(f,inputs=[A])
+
+        self.check_codegen(f,inputs=[A])
 
     
 if __name__ == '__main__':
