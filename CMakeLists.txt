@@ -1458,7 +1458,7 @@ if(WITH_PROXQP)
         # --debug-find
     add_library(proxqp INTERFACE)
     # This is similar to ALIAS but works fine on imported targets with CMake 3.10
-    add_library(proxsuite::proxsuite INTERFACE IMPORTED)
+    add_library(proxsuite::proxsuite INTERFACE)
     set_target_properties(proxsuite::proxsuite PROPERTIES INTERFACE_LINK_LIBRARIES proxqp)
     add_dependencies(proxqp proxqp-external)
     target_include_directories(proxqp INTERFACE "${CMAKE_BINARY_DIR}/external_projects/include")
